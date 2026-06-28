@@ -3,25 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Autodraft Pro Workspace</title>
+    <title>Autodraft Canvas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     
     <style>
         :root {
-            --bg-base: #0f0f11;
-            --bg-panel: #18181b;
-            --bg-hover: #27272a;
-            --border-dim: #27272a;
-            --text-main: #f4f4f5;
-            --text-muted: #a1a1aa;
-            --accent: #3b82f6;
+            --bg-dark: #121212;
+            --bg-panel: #1a1a1a;
+            --bg-timeline: #181818;
+            --border-color: #2a2a2a;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --accent-blue: #3b82f6;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
         
         body { 
-            background-color: var(--bg-base); 
+            background-color: var(--bg-dark); 
             color: var(--text-main); 
             height: 100vh; 
             width: 100vw; 
@@ -30,101 +30,157 @@
             overflow: hidden; 
         }
 
-        /* --- 1. TOP NAVBAR --- */
+        /* --- 1. TOP BAR (Exact match with Desktop/Mobile screenshots) --- */
         .topbar {
-            height: 50px;
+            height: 55px;
             background-color: var(--bg-panel);
-            border-bottom: 1px solid var(--border-dim);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 16px;
-            z-index: 10;
         }
 
-        .tb-left { display: flex; align-items: center; gap: 16px; }
-        .back-btn { background: none; border: none; color: var(--text-muted); font-size: 16px; cursor: pointer; }
-        .proj-title { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .tb-left { display: flex; align-items: center; gap: 20px; font-size: 18px; }
+        .tb-left i { cursor: pointer; color: var(--text-main); }
+        .icon-siren { color: #eab308 !important; }
 
-        .ratio-badge { background: var(--bg-base); padding: 4px 10px; border-radius: 6px; font-size: 12px; border: 1px solid var(--border-dim); }
-
-        .tb-right { display: flex; align-items: center; gap: 16px; color: var(--text-muted); font-size: 14px; }
-        .export-btn { background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; }
-
-        /* --- 2. MAIN LAYOUT (SIDEBARS + CANVAS) --- */
-        .main-area {
-            flex: 1;
-            display: flex;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Left Panel (Layers & Assets) */
-        .side-panel {
-            width: 240px;
-            background-color: var(--bg-panel);
-            border-right: 1px solid var(--border-dim);
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s ease;
-        }
+        .tb-center { display: flex; flex-direction: column; align-items: center; display: none; } /* Used for Desktop title */
         
-        .panel-header { padding: 12px 16px; font-size: 12px; font-weight: 600; border-bottom: 1px solid var(--border-dim); color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
-        .layer-item { padding: 12px 16px; font-size: 13px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #222; cursor: pointer; }
-        .layer-item:hover { background-color: var(--bg-hover); }
+        .tb-right { display: flex; align-items: center; gap: 20px; font-size: 18px; }
+        .tb-right i { cursor: pointer; color: var(--text-main); }
+        .btn-download {
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
 
-        /* Canvas Workspace */
+        .meta-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 16px;
+            font-size: 11px;
+            color: var(--text-muted);
+            background-color: var(--bg-panel);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* --- 2. WORKSPACE CANVAS --- */
         .workspace {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #121212;
+            background-color: #151515;
             position: relative;
-            overflow: auto; /* Allows panning if canvas is huge */
+            overflow: auto;
         }
         
-        .canvas-container-wrapper {
-            box-shadow: 0 12px 40px rgba(0,0,0,0.8);
-            transition: all 0.2s ease;
+        .canvas-wrapper {
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         }
 
-        /* --- 3. TIMELINE --- */
+        /* --- 3. TIMELINE SECTION --- */
         .timeline {
-            height: 120px;
-            background-color: var(--bg-panel);
-            border-top: 1px solid var(--border-dim);
+            background-color: var(--bg-timeline);
+            border-top: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
         }
 
-        .tl-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 16px;
-            border-bottom: 1px solid var(--border-dim);
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .play-group { display: flex; gap: 16px; font-size: 16px; align-items: center; color: var(--text-main); }
-        .track-area { flex: 1; padding: 10px; display: flex; gap: 10px; overflow-x: auto; }
-        .scene-box { background: white; color: black; font-size: 12px; padding: 4px 12px; border-radius: 4px; font-weight: 600; }
-
-        /* --- 4. BOTTOM TOOLS --- */
-        .bottom-tools {
-            height: 65px;
-            background-color: #000;
+        /* Row 1: Playback Controls */
+        .tl-row-1 {
             display: flex;
             align-items: center;
+            padding: 12px 16px;
             gap: 20px;
-            padding: 0 16px;
-            overflow-x: auto;
-            border-top: 1px solid var(--border-dim);
+        }
+        .time-text { font-size: 14px; font-weight: 500; min-width: 45px; }
+        .play-group { display: flex; align-items: center; gap: 16px; font-size: 20px; color: var(--text-muted); }
+        .play-group .fa-play { font-size: 28px; color: var(--text-main); }
+        .zoom-group { display: flex; align-items: center; gap: 16px; font-size: 18px; margin-left: auto; color: var(--text-main); }
+
+        /* Row 2: Cut, Copy, Speed, Undo/Redo */
+        .tl-row-2 {
+            display: flex;
+            align-items: center;
+            padding: 0 16px 12px;
+            gap: 20px;
+            color: #555; /* Dim color as per screenshot */
+            font-size: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .tl-row-2 i { cursor: pointer; }
+        .tl-divider { width: 1px; height: 16px; background-color: var(--border-color); }
+        .speed-text { font-size: 13px; display: flex; align-items: center; gap: 4px; color: var(--text-muted); }
+        .active-icon { color: var(--text-main) !important; }
+
+        /* Row 3: Scenes Tab */
+        .scene-tabs {
+            display: flex;
+            align-items: center;
+            background-color: #1e1e1e;
+            padding: 0 8px;
+        }
+        .nav-arrow { padding: 12px; color: var(--text-muted); cursor: pointer; }
+        .scene-active {
+            background-color: #ffffff;
+            color: #000000;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-radius: 4px 4px 0 0;
+            margin-top: 4px;
+        }
+        .scene-new {
+            color: var(--text-muted);
+            font-size: 13px;
+            padding: 10px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .bottom-tools::-webkit-scrollbar, .track-area::-webkit-scrollbar { display: none; }
+        /* Row 4: Timeline Track */
+        .track-ruler {
+            height: 24px;
+            background-color: #222;
+            display: flex;
+            align-items: flex-end;
+            padding-left: 16px;
+            font-size: 10px;
+            color: var(--text-muted);
+            border-bottom: 1px solid #111;
+        }
+        .tick { flex: 1; border-left: 1px solid #444; height: 8px; padding-left: 4px; }
+        .tick-major { height: 16px; border-left: 1px solid #777; }
+        .track-area { height: 70px; background-color: #0d0d0d; }
+
+        /* --- 4. BOTTOM TOOLS BAR (Exact 16 Tools from Autodraft) --- */
+        .bottom-tools {
+            height: 70px;
+            background-color: #0a0a0a;
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            padding: 0 20px;
+            overflow-x: auto;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .bottom-tools::-webkit-scrollbar { display: none; }
 
         .b-tool {
             display: flex;
@@ -137,29 +193,28 @@
             cursor: pointer;
             position: relative;
         }
-        .b-tool:hover { color: white; }
         .b-tool i { font-size: 18px; }
 
+        /* Exact matching Blue AI Badge */
         .ai-badge::after {
             content: 'AI';
             position: absolute;
             top: -6px;
             right: 0px;
-            background-color: var(--accent);
+            background-color: var(--accent-blue);
             color: white;
-            font-size: 7px;
-            padding: 2px 4px;
+            font-size: 8px;
+            padding: 2px 5px;
             border-radius: 4px;
-            font-weight: bold;
+            font-weight: 700;
         }
 
-        /* --- RESPONSIVE MOBILE LAYOUT --- */
-        @media (max-width: 768px) {
-            .side-panel { display: none; } /* Hide left layers panel on phone */
-            .tb-right .fa-history, .tb-right .fa-save { display: none; } /* Hide extra icons */
-            .timeline { height: 90px; }
-            .tl-controls span { display: none; } /* Hide text in timeline controls */
-            .b-tool { min-width: 60px; }
+        /* Desktop specific adjustments */
+        @media (min-width: 768px) {
+            .meta-bar { display: none; }
+            .tb-center { display: flex; }
+            .tb-left .fa-cog { display: none; }
+            .timeline { max-height: 200px; }
         }
     </style>
 </head>
@@ -167,118 +222,153 @@
 
     <header class="topbar">
         <div class="tb-left">
-            <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i></button>
-            <i class="fas fa-magic" style="color: #eab308;"></i>
-            <div class="proj-title"><span id="projTitle">New Project</span></div>
-        </div>
-        
-        <div class="ratio-badge">
-            <i id="ratioIcon" class="fas fa-desktop"></i> <span id="ratioText">16:9</span>
+            <i class="fas fa-arrow-left" onclick="window.location.href='index.html'"></i>
+            <i class="fas fa-cog"></i> <i class="fas fa-lightbulb icon-siren"></i> </div>
+
+        <div class="tb-center">
+            <div style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-magic" style="color:#eab308;"></i> <span id="desktopProjTitle">New Project</span> <i class="fas fa-pen" style="font-size:10px; color:#666;"></i>
+            </div>
+            <div style="font-size: 10px; color: var(--text-muted);">v79.3.0 IN &nbsp; Ultra Low Mode <i class="fas fa-caret-down"></i></div>
         </div>
 
         <div class="tb-right">
             <i class="fas fa-history"></i>
             <i class="fas fa-save"></i>
-            <i class="fas fa-layer-group" style="color: white;"></i> <button class="export-btn"><i class="fas fa-download"></i></button>
+            <i class="fas fa-image"></i>
+            <button class="btn-download"><i class="fas fa-download"></i></button>
         </div>
     </header>
-
-    <div class="main-area">
-        
-        <aside class="side-panel">
-            <div class="panel-header">Layers</div>
-            <div class="layer-item"><i class="fas fa-image"></i> Background</div>
-            <div class="layer-item"><i class="fas fa-font"></i> Main Title</div>
-            <div class="layer-item"><i class="fas fa-user"></i> AI Character 1</div>
-        </aside>
-
-        <main class="workspace" id="workspaceContainer">
-            <div class="canvas-container-wrapper">
-                <canvas id="mainCanvas"></canvas>
-            </div>
-        </main>
+    
+    <div class="meta-bar">
+        <span>v79.3.0 &nbsp;&nbsp; IN</span>
+        <span id="mobileProjId">16709911</span>
     </div>
 
-    <div class="timeline">
-        <div class="tl-controls">
-            <span><i class="far fa-copy"></i> Duplicate &nbsp; <i class="fas fa-cut"></i> Split</span>
+    <main class="workspace" id="canvasContainer">
+        <div class="canvas-wrapper">
+            <canvas id="mainCanvas"></canvas>
+        </div>
+    </main>
+
+    <section class="timeline">
+        <div class="tl-row-1">
+            <div class="time-text">00:00</div>
             <div class="play-group">
-                <i class="fas fa-step-backward" style="font-size:14px; color:#888;"></i>
-                <i class="fas fa-play-circle"></i>
-                <i class="fas fa-step-forward" style="font-size:14px; color:#888;"></i>
+                <i class="fas fa-step-backward"></i>
+                <i class="fas fa-play play-btn"></i>
+                <i class="fas fa-film"></i>
+                <i class="fas fa-step-forward"></i>
             </div>
-            <span>00:00 &nbsp; 1x <i class="fas fa-forward"></i></span>
+            <div class="zoom-group">
+                <i class="fas fa-search-minus"></i>
+                <i class="fas fa-search-plus"></i>
+                <i class="fas fa-redo"></i>
+            </div>
         </div>
-        <div class="track-area">
-            <div class="scene-box">Scene 1 <i class="fas fa-ellipsis-v" style="margin-left:8px; color:#999;"></i></div>
-            <div style="color: #666; font-size: 12px; padding: 4px 12px; border: 1px dashed #666; border-radius: 4px; display:flex; align-items:center;">+ New Scene</div>
+
+        <div class="tl-row-2">
+            <i class="far fa-copy"></i>
+            <i class="fas fa-cut"></i>
+            <i class="fas fa-video"></i>
+            <div class="tl-divider"></div>
+            <div class="speed-text">1x <i class="fas fa-forward active-icon"></i></div>
+            <div class="tl-divider"></div>
+            <i class="fas fa-undo active-icon"></i>
+            <i class="fas fa-redo active-icon"></i>
+            <div class="tl-divider"></div>
+            <i class="fas fa-minus active-icon"></i>
+            <i class="fas fa-plus active-icon"></i>
+            <div style="flex:1;"></div>
+            <i class="fas fa-expand active-icon"></i>
         </div>
-    </div>
+
+        <div class="scene-tabs">
+            <i class="fas fa-chevron-left nav-arrow"></i>
+            <div class="scene-active">Scene1 <i class="fas fa-ellipsis-v" style="color: #666;"></i></div>
+            <div class="scene-new"><i class="fas fa-plus"></i> New Scene</div>
+            <div style="flex:1;"></div>
+            <i class="fas fa-chevron-right nav-arrow"></i>
+        </div>
+
+        <div class="track-ruler">
+            <div class="tick tick-major">0</div>
+            <div class="tick"></div><div class="tick"></div>
+            <div class="tick tick-major">10</div>
+            <div class="tick"></div><div class="tick"></div>
+            <div class="tick tick-major">20</div>
+            <div class="tick"></div><div class="tick"></div>
+            <div class="tick tick-major">30</div>
+            <div class="tick"></div>
+        </div>
+        <div class="track-area"></div>
+    </section>
 
     <div class="bottom-tools">
-        <div class="b-tool"><i class="fas fa-mouse-pointer"></i><span>Select</span></div>
+        <div class="b-tool"><i class="fas fa-running"></i><span>Character</span></div>
+        <div class="b-tool"><i class="far fa-folder-open"></i><span>Media</span></div>
+        <div class="b-tool"><i class="fas fa-clapperboard"></i><span>Templates</span></div>
         <div class="b-tool ai-badge"><i class="fas fa-image"></i><span>Image Gen</span></div>
         <div class="b-tool ai-badge"><i class="fas fa-video"></i><span>Video Gen</span></div>
-        <div class="b-tool ai-badge"><i class="fas fa-user-astronaut"></i><span>AI Char</span></div>
+        <div class="b-tool ai-badge"><i class="fas fa-microphone-alt"></i><span>AI Voice</span></div>
+        <div class="b-tool ai-badge"><i class="fas fa-user-astronaut"></i><span>AI Character</span></div>
+        <div class="b-tool ai-badge"><i class="fas fa-photo-video"></i><span>AI Thumbnail</span></div>
+        <div class="b-tool"><i class="fas fa-box-open"></i><span>Asset Library</span></div>
+        <div class="b-tool ai-badge"><i class="fas fa-magic"></i><span>AI Prop</span></div>
+        <div class="b-tool"><i class="fas fa-atom"></i><span>Effects</span></div>
+        <div class="b-tool"><i class="fas fa-wave-square"></i><span>Sounds</span></div>
+        <div class="b-tool"><i class="fas fa-music"></i><span>Music</span></div>
+        <div class="b-tool"><i class="fas fa-walking"></i><span>Anim IK</span></div>
         <div class="b-tool"><i class="fas fa-font"></i><span>Text</span></div>
-        <div class="b-tool"><i class="fas fa-shapes"></i><span>Shapes</span></div>
-        <div class="b-tool"><i class="far fa-folder-open"></i><span>Media</span></div>
-        <div class="b-tool"><i class="fas fa-music"></i><span>Audio</span></div>
-        <div class="b-tool"><i class="fas fa-magic"></i><span>Effects</span></div>
-        <div class="b-tool"><i class="fas fa-trash"></i><span>Delete</span></div>
+        <div class="b-tool"><i class="fas fa-play-circle"></i><span>Tutorials</span></div>
     </div>
 
     <script>
-        // Data extraction from URL
+        // Set dynamic URL params
         const params = new URLSearchParams(window.location.search);
-        const title = params.get('title') || 'Untitled Project';
+        const title = params.get('title') || 'New Project';
         const ratio = params.get('ratio') || '16:9';
         
-        document.getElementById('projTitle').innerText = title;
-        document.getElementById('ratioText').innerText = ratio;
-        
-        // Responsive Canvas Initialization
+        document.getElementById('desktopProjTitle').innerText = title;
+        document.getElementById('mobileProjId').innerText = Math.floor(10000000 + Math.random() * 90000000);
+
         let canvas;
-        
+
         function initCanvas() {
-            // Get available workspace width and height
-            const workspace = document.getElementById('workspaceContainer');
-            const availableWidth = workspace.clientWidth - 40; // 40px padding
-            const availableHeight = workspace.clientHeight - 40;
+            // Get available space for canvas
+            const container = document.getElementById('canvasContainer');
+            const availableWidth = container.clientWidth - 40; 
+            const availableHeight = container.clientHeight - 40;
 
-            let targetWidth, targetHeight;
+            let cWidth, cHeight;
 
-            // Calculate exact dimensions based on selected ratio
+            // Apply selected ratio exactly as requested
             if (ratio === '9:16') {
-                document.getElementById('ratioIcon').className = 'fas fa-mobile-alt';
-                targetHeight = availableHeight > 600 ? 600 : availableHeight;
-                targetWidth = targetHeight * (9 / 16);
+                cHeight = availableHeight > 550 ? 550 : availableHeight;
+                cWidth = cHeight * (9 / 16);
             } else {
-                document.getElementById('ratioIcon').className = 'fas fa-desktop';
-                targetWidth = availableWidth > 800 ? 800 : availableWidth;
-                targetHeight = targetWidth * (9 / 16);
+                cWidth = availableWidth > 800 ? 800 : availableWidth;
+                cHeight = cWidth * (9 / 16);
             }
 
-            // Init Fabric.js
             canvas = new fabric.Canvas('mainCanvas', {
-                width: targetWidth,
-                height: targetHeight,
+                width: cWidth,
+                height: cHeight,
                 backgroundColor: '#ffffff'
             });
         }
 
-        // Initialize on load
+        // Initialize and handle window resize for canvas scaling
         window.onload = initCanvas;
-
-        // Auto-resize canvas when window size changes (Responsive support)
+        
         window.addEventListener('resize', () => {
             if(canvas) {
-                canvas.dispose(); // destroy old canvas
-                initCanvas(); // recreate with new dimensions
+                canvas.dispose();
+                initCanvas();
             }
         });
 
-        // Delete active object with keyboard
+        // Basic Keyboard Support for interactive canvas
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Delete' || e.key === 'Backspace') {
                 const activeObj = canvas.getActiveObject();
