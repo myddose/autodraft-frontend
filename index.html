@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autodraft Studio</title>
+    <title>Autodraft Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -18,247 +18,531 @@
             --border-color: #2a2a2a;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background-color: var(--bg-main); color: var(--text-primary); overflow: hidden; height: 100vh; width: 100vw; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
 
-        /* --- SCREEN CONTAINERS --- */
-        #screen-dashboard { display: flex; height: 100%; width: 100%; }
-        #screen-canvas { display: none; height: 100%; width: 100%; flex-direction: column; background-color: #0f0f0f; }
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            width: 100vw;
+        }
 
-        /* =========================================
-           DASHBOARD STYLES (Existing)
-           ========================================= */
-        .sidebar { width: 260px; background-color: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px 0; }
-        .logo { font-size: 22px; font-weight: bold; padding: 0 24px 20px; display: flex; align-items: center; gap: 8px; }
+        /* --- Left Sidebar --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            padding: 0 24px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+        }
+
         .logo span { font-weight: 300; }
-        .nav-menu { display: flex; flex-direction: column; gap: 4px; padding: 0 12px; }
-        .nav-item { display: flex; align-items: center; gap: 16px; padding: 12px 16px; color: var(--text-secondary); text-decoration: none; border-radius: 8px; font-size: 14px; transition: all 0.2s; }
-        .nav-item:hover, .nav-item.active { background-color: var(--bg-hover); color: var(--text-primary); }
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
-        .top-header { display: flex; justify-content: flex-end; align-items: center; padding: 16px 32px; gap: 16px; }
-        .search-bar { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; display: flex; align-items: center; gap: 10px; width: 250px; }
-        .search-bar input { background: none; border: none; color: white; outline: none; width: 100%; font-size: 13px; }
-        .profile-icon { width: 36px; height: 36px; border-radius: 50%; background-color: var(--bg-card); display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color); }
-        .dashboard-body { padding: 0 32px 32px; max-width: 900px; margin: 0 auto; width: 100%; }
-        .hero-section { background-color: var(--bg-card); border-radius: 16px; padding: 32px; text-align: center; margin-bottom: 32px; }
-        .hero-section h1 { font-size: 22px; margin-bottom: 8px; }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 0 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        /* --- Main Content Area --- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        /* --- Top Header --- */
+        .top-header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 16px 32px;
+            gap: 16px;
+        }
+
+        .search-bar {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 250px;
+        }
+
+        .search-bar input {
+            background: none;
+            border: none;
+            color: white;
+            outline: none;
+            width: 100%;
+            font-size: 13px;
+        }
+
+        .profile-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+
+        /* --- Dashboard Body --- */
+        .dashboard-body {
+            padding: 0 32px 32px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* --- Hero Section --- */
+        .hero-section {
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 32px;
+            border: 1px solid var(--border-color);
+        }
+
+        .hero-section h1 { font-size: 22px; margin-bottom: 8px; font-weight: 600; }
         .hero-section p { color: var(--text-secondary); font-size: 13px; margin-bottom: 24px; }
-        .ai-input-box { background-color: #2a2a2a; border-radius: 24px; padding: 8px 12px 8px 24px; display: flex; align-items: center; max-width: 600px; margin: 0 auto; }
-        .ai-input-box input { flex: 1; background: none; border: none; color: white; outline: none; font-size: 14px; }
-        .send-btn { background-color: var(--accent-blue); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .tools-grid { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; margin-bottom: 40px; }
-        .tool-item { display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; }
-        .tool-icon { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; background-color: var(--bg-card); transition: transform 0.2s; }
+
+        .ai-input-box {
+            background-color: #262626;
+            border-radius: 24px;
+            padding: 8px 12px 8px 24px;
+            display: flex;
+            align-items: center;
+            max-width: 600px;
+            margin: 0 auto;
+            border: 1px solid #333;
+        }
+
+        .ai-input-box input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: white;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .send-btn {
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Tools Grid --- */
+        .tools-grid {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .tool-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .tool-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            transition: transform 0.2s;
+        }
+
         .tool-item:hover .tool-icon { transform: scale(1.05); }
         .tool-item span { font-size: 12px; color: var(--text-secondary); text-align: center; }
-        .icon-anim { background: #e0e7ff; color: #4338ca; }
-        .icon-img { background: #dcfce7; color: #15803d; }
-        .icon-voice { background: #f3e8ff; color: #7e22ce; }
-        .icon-video { background: #ffedd5; color: #c2410c; }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .section-header h3 { font-size: 16px; font-weight: 600; }
 
-        /* =========================================
-           POPUP MODAL STYLES
-           ========================================= */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-content { background-color: #1a1a1a; width: 400px; border-radius: 12px; padding: 24px; border: 1px solid var(--border-color); box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-        .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
-        .modal-group { margin-bottom: 20px; }
-        .modal-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
-        .modal-input { width: 100%; background-color: #2a2a2a; border: none; padding: 12px; border-radius: 8px; color: white; font-size: 14px; outline: none; }
-        .canvas-options { display: flex; background-color: #2a2a2a; border-radius: 8px; overflow: hidden; padding: 4px; }
-        .canvas-opt { flex: 1; text-align: center; padding: 10px; font-size: 13px; color: var(--text-secondary); cursor: pointer; border-radius: 6px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .canvas-opt.active { background-color: white; color: black; font-weight: 600; }
-        .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
-        .btn-cancel { flex: 1; background-color: #333; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 500; }
-        .btn-create { flex: 1; background-color: var(--accent-blue); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 500; }
-        
-        /* =========================================
-           CANVAS EDITOR STYLES
-           ========================================= */
-        .canvas-topbar { height: 50px; background-color: #161616; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
-        .canvas-topbar-left { display: flex; align-items: center; gap: 16px; }
-        .back-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 16px; }
-        .project-name { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .ratio-selector { display: flex; align-items: center; gap: 6px; font-size: 13px; background: #232323; padding: 4px 12px; border-radius: 16px; }
-        .canvas-topbar-right { display: flex; align-items: center; gap: 16px; color: var(--text-secondary); font-size: 16px; }
-        .export-btn { background-color: var(--accent-blue); color: white; border: none; padding: 6px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; }
-        
-        .canvas-workspace { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        .white-board { background-color: white; aspect-ratio: 16/9; width: 70%; max-width: 900px; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        
-        .timeline-area { height: 120px; background-color: #1a1a1a; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; }
-        .timeline-controls { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; border-bottom: 1px solid #2a2a2a; }
-        .play-controls { display: flex; gap: 16px; color: var(--text-secondary); font-size: 14px; }
-        .track-area { flex: 1; padding: 10px; display: flex; align-items: flex-start; gap: 10px; overflow-x: auto; }
-        .scene-box { background: white; color: black; font-size: 12px; padding: 4px 12px; border-radius: 4px; font-weight: 500; }
-        .add-scene { background: transparent; border: 1px dashed #666; color: #666; font-size: 12px; padding: 4px 12px; border-radius: 4px; }
-        
-        .bottom-tools { display: flex; background-color: #121212; padding: 12px 16px; gap: 24px; overflow-x: auto; border-top: 1px solid var(--border-color); justify-content: center; }
-        .b-tool { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 11px; cursor: pointer; position: relative; min-width: 50px; }
-        .b-tool:hover { color: white; }
-        .b-tool i { font-size: 18px; }
-        /* The small blue AI badge on icons */
-        .ai-badge::after { content: 'AI'; position: absolute; top: -6px; right: 0px; background-color: var(--accent-blue); color: white; font-size: 8px; padding: 2px 4px; border-radius: 4px; font-weight: bold; }
+        /* Icon Colors matching screenshot */
+        .icon-anim { background: #312e81; color: #818cf8; }
+        .icon-img { background: #064e3b; color: #34d399; }
+        .icon-voice { background: #581c87; color: #c084fc; }
+        .icon-video { background: #7c2d12; color: #fb923c; }
+        .icon-story { background: #4c1d95; color: #a78bfa; }
+        .icon-seo { background: #1e3a8a; color: #60a5fa; }
+        .icon-feedback { background: #881337; color: #fb7185; }
+
+        /* --- Section Titles --- */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            margin-top: 20px;
+        }
+        .section-header h3 { font-size: 16px; font-weight: 600; }
+        .view-all { color: var(--accent-blue); font-size: 13px; text-decoration: none; }
+
+        /* --- Recent Projects --- */
+        .projects-grid {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .project-card { width: 160px; cursor: pointer; }
+
+        .project-thumb {
+            width: 100%;
+            height: 200px;
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-size: 36px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .project-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: white; }
+        .project-meta { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; }
+
+        /* --- Tutorials --- */
+        .tags { display: flex; gap: 12px; margin-bottom: 16px; }
+        .tag { padding: 6px 16px; border-radius: 16px; font-size: 12px; color: var(--text-secondary); cursor: pointer; background: #1a1a1a; }
+        .tag.active { background-color: white; color: black; font-weight: 500; }
+
+        .tutorials-scroll {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .tutorial-card { min-width: 150px; }
+        .tutorial-thumb {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(180deg, #1e293b, #0f172a);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border-color);
+        }
+        .tutorial-title { font-size: 13px; color: var(--text-secondary); }
         
         ::-webkit-scrollbar { width: 0; height: 0; }
+
+        /* =========================================
+           POPUP MODAL STYLES (Exact Clone)
+           ========================================= */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.75);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #1e1e24;
+            width: 420px;
+            border-radius: 16px;
+            padding: 28px;
+            border: 1px solid #2d2d35;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: white;
+        }
+
+        .modal-group { margin-bottom: 20px; }
+        .modal-group label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; font-weight: 500; }
+        
+        .modal-input {
+            width: 100%;
+            background-color: #2b2b36;
+            border: 1px solid #3a3a47;
+            padding: 14px;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .modal-input:focus { border-color: var(--accent-blue); }
+
+        .canvas-options { display: flex; background-color: #14141a; border-radius: 10px; overflow: hidden; padding: 4px; gap: 4px; }
+        .canvas-opt {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .canvas-opt.active { background-color: #ffffff; color: #000000; font-weight: 600; }
+
+        .modal-actions { display: flex; gap: 14px; margin-top: 32px; }
+        .btn-cancel {
+            flex: 1;
+            background-color: #2b2b36;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .btn-create {
+            flex: 1;
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .btn-create:hover { opacity: 0.9; }
     </style>
 </head>
 <body>
 
-    <div id="screen-dashboard">
-        <aside class="sidebar">
-            <div class="logo"><i class="fas fa-wave-square" style="color: white;"></i> auto<span>draft</span></div>
-            <nav class="nav-menu">
-                <a href="#" class="nav-item active"><i class="fas fa-home"></i> Dashboard</a>
-                <a href="#" class="nav-item"><i class="fas fa-layer-group"></i> Projects</a>
-            </nav>
-        </aside>
+    <aside class="sidebar">
+        <div class="logo">
+            <i class="fas fa-wave-square" style="color: #3b82f6;"></i> auto<span>draft</span>
+        </div>
+        <nav class="nav-menu">
+            <a href="#" class="nav-item active"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="#" class="nav-item"><i class="fas fa-layer-group"></i> Projects</a>
+            <a href="#" class="nav-item"><i class="fas fa-image"></i> Image Generation</a>
+            <a href="#" class="nav-item"><i class="fas fa-headphones"></i> Audio Generation</a>
+            <a href="#" class="nav-item"><i class="fas fa-video"></i> AI Video</a>
+            <a href="#" class="nav-item"><i class="fas fa-book"></i> AI Story Writer</a>
+            <a href="#" class="nav-item"><i class="fas fa-search"></i> SEO Writer</a>
+            <a href="#" class="nav-item"><i class="fab fa-youtube"></i> YouTube Feedback</a>
+        </nav>
+    </aside>
 
-        <main class="main-content">
-            <header class="top-header">
-                <div class="search-bar"><i class="fas fa-search" style="color: #666;"></i><input type="text" placeholder="Search files, folders"></div>
-                <div class="profile-icon"><i class="far fa-user"></i></div>
-            </header>
+    <main class="main-content">
+        <header class="top-header">
+            <div class="search-bar">
+                <i class="fas fa-search" style="color: #666;"></i>
+                <input type="text" placeholder="Search files, folders">
+            </div>
+            <div class="profile-icon">
+                <i class="far fa-user"></i>
+            </div>
+        </header>
 
-            <div class="dashboard-body">
-                <section class="hero-section">
-                    <h1>Monetize & Grow Faster on YouTube</h1>
-                    <p>Grow faster with tailored AI tools that bring you more views, subscribers, and revenue</p>
-                </section>
+        <div class="dashboard-body">
+            
+            <section class="hero-section">
+                <h1>Monetize & Grow Faster on YouTube</h1>
+                <p>Grow faster with tailored AI tools that bring you more views, subscribers, and revenue</p>
+                <div class="ai-input-box">
+                    <input type="text" placeholder="What should be my next video">
+                    <button class="send-btn"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </section>
 
-                <section class="tools-grid">
-                    <div class="tool-item" onclick="openPopup()">
-                        <div class="tool-icon icon-anim"><i class="fas fa-running"></i></div>
-                        <span>Animation Studio</span>
-                    </div>
-                    <div class="tool-item">
-                        <div class="tool-icon icon-img"><i class="fas fa-image"></i></div>
-                        <span>AI Image</span>
-                    </div>
-                    <div class="tool-item">
-                        <div class="tool-icon icon-voice"><i class="fas fa-microphone"></i></div>
-                        <span>AI Voice</span>
-                    </div>
-                    <div class="tool-item">
-                        <div class="tool-icon icon-video"><i class="fas fa-video"></i></div>
-                        <span>AI Video</span>
-                    </div>
-                </section>
-                
-                <div class="section-header">
-                    <h3>Recent Projects</h3>
+            <section class="tools-grid">
+                <div class="tool-item" onclick="openModal()">
+                    <div class="tool-icon icon-anim"><i class="fas fa-running"></i></div>
+                    <span>Animation Studio</span>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon icon-img"><i class="fas fa-image"></i></div>
+                    <span>AI Image</span>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon icon-voice"><i class="fas fa-microphone"></i></div>
+                    <span>AI Voice</span>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon icon-video"><i class="fas fa-video"></i></div>
+                    <span>AI Video</span>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon icon-story"><i class="fas fa-file-alt"></i></div>
+                    <span>AI Story Writer</span>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon icon-seo"><i class="fab fa-youtube"></i></div>
+                    <span>Youtube SEO Writer</span>
+                </div>
+            </section>
+
+            <div class="section-header">
+                <h3>Recent Projects</h3>
+                <div style="display: flex; gap: 16px; align-items: center;">
+                    <a href="#" class="view-all">View All</a>
+                    <i class="fas fa-folder" style="color: #666; cursor: pointer;"></i>
+                    <i class="fas fa-trash" style="color: #666; cursor: pointer;"></i>
                 </div>
             </div>
-        </main>
-    </div>
+            <section class="projects-grid">
+                <div class="project-card">
+                    <div class="project-thumb"><i class="fas fa-image" style="color: #333;"></i></div>
+                    <div class="project-title">New moral storiy</div>
+                    <div class="project-meta">ANIMATION 6/27/2026</div>
+                </div>
+                <div class="project-card">
+                    <div class="project-thumb"><i class="fas fa-image" style="color: #333;"></i></div>
+                    <div class="project-title">New Project 1</div>
+                    <div class="project-meta">ANIMATION 6/26/2026</div>
+                </div>
+            </section>
 
-    <div id="project-modal" class="modal-overlay">
+            <div class="section-header">
+                <h3>Tutorials</h3>
+            </div>
+            <div class="tags">
+                <div class="tag active">English</div>
+                <div class="tag">Hindi</div>
+                <div class="tag">Bengali</div>
+            </div>
+            <section class="tutorials-scroll">
+                <div class="tutorial-card">
+                    <div class="tutorial-thumb"></div>
+                    <div class="tutorial-title">Text feature</div>
+                </div>
+                <div class="tutorial-card">
+                    <div class="tutorial-thumb"></div>
+                    <div class="tutorial-title">Image Gen</div>
+                </div>
+                <div class="tutorial-card">
+                    <div class="tutorial-thumb"></div>
+                    <div class="tutorial-title">Export Feature</div>
+                </div>
+                <div class="tutorial-card">
+                    <div class="tutorial-thumb"></div>
+                    <div class="tutorial-title">Thumbnail</div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="projectModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-title">Create new project</div>
             
             <div class="modal-group">
                 <label>Project Title</label>
-                <input type="text" class="modal-input" value="New Project">
+                <input type="text" id="projectTitleInput" class="modal-input" value="New Project">
             </div>
 
             <div class="modal-group">
                 <label>Canvas Size</label>
                 <div class="canvas-options">
-                    <div class="canvas-opt active"><i class="fas fa-desktop"></i> 16:9</div>
-                    <div class="canvas-opt"><i class="fas fa-mobile-alt"></i> 9:16</div>
+                    <div class="canvas-opt active" onclick="selectRatio(this, '16:9')"><i class="fas fa-desktop"></i> 16:9</div>
+                    <div class="canvas-opt" onclick="selectRatio(this, '9:16')"><i class="fas fa-mobile-alt"></i> 9:16</div>
                 </div>
             </div>
 
             <div class="modal-actions">
-                <button class="btn-cancel" onclick="closePopup()">Cancel</button>
-                <button class="btn-create" onclick="openCanvas()">Create</button>
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-create" onclick="redirectToCanvas()">Create</button>
             </div>
-        </div>
-    </div>
-
-    <div id="screen-canvas">
-        
-        <div class="canvas-topbar">
-            <div class="canvas-topbar-left">
-                <button class="back-btn" onclick="backToDashboard()"><i class="fas fa-arrow-left"></i></button>
-                <i class="fas fa-magic" style="color: #eab308;"></i>
-                <div class="project-name">New Project <i class="fas fa-pen" style="font-size: 10px; color: #666;"></i></div>
-                <span style="font-size: 10px; color: #666; margin-left: 10px;">Ultra Low Mode <i class="fas fa-caret-down"></i></span>
-            </div>
-            
-            <div class="ratio-selector">
-                <i class="fas fa-desktop"></i> 16:9 <i class="fas fa-caret-down"></i>
-            </div>
-            
-            <div class="canvas-topbar-right">
-                <i class="fas fa-history"></i>
-                <i class="fas fa-save"></i>
-                <button class="export-btn"><i class="fas fa-download"></i></button>
-            </div>
-        </div>
-
-        <div class="canvas-workspace">
-            <div class="white-board"></div>
-        </div>
-
-        <div class="timeline-area">
-            <div class="timeline-controls">
-                <div style="font-size: 11px; color: #666;"><i class="far fa-copy"></i> Duplicate &nbsp; <i class="fas fa-cut"></i> Split</div>
-                <div class="play-controls">
-                    <i class="fas fa-step-backward"></i>
-                    <i class="fas fa-play" style="color: white;"></i>
-                    <i class="fas fa-film"></i>
-                    <i class="fas fa-step-forward"></i>
-                </div>
-                <div style="font-size: 11px; color: #666;">00:36 &nbsp; 1x <i class="fas fa-forward"></i> &nbsp; <i class="fas fa-undo"></i> <i class="fas fa-search-minus"></i> <i class="fas fa-search-plus"></i></div>
-            </div>
-            <div class="track-area">
-                <div class="scene-box">Scene1 <i class="fas fa-ellipsis-v" style="margin-left:8px; color:#999;"></i></div>
-                <div class="add-scene">+ New Scene</div>
-            </div>
-        </div>
-
-        <div class="bottom-tools">
-            <div class="b-tool"><i class="fas fa-walking"></i><span>Character</span></div>
-            <div class="b-tool"><i class="fas fa-folder-open"></i><span>Media</span></div>
-            <div class="b-tool"><i class="fas fa-clapperboard"></i><span>Templates</span></div>
-            <div class="b-tool ai-badge"><i class="fas fa-image"></i><span>Image Gen</span></div>
-            <div class="b-tool ai-badge"><i class="fas fa-video"></i><span>Video Gen</span></div>
-            <div class="b-tool ai-badge"><i class="fas fa-microphone"></i><span>AI Voice</span></div>
-            <div class="b-tool ai-badge"><i class="fas fa-user-astronaut"></i><span>AI Character</span></div>
-            <div class="b-tool ai-badge"><i class="fas fa-photo-video"></i><span>AI Thumbnail</span></div>
-            <div class="b-tool"><i class="fas fa-box-open"></i><span>Asset Library</span></div>
-            <div class="b-tool ai-badge"><i class="fas fa-cube"></i><span>AI Prop</span></div>
-            <div class="b-tool"><i class="fas fa-magic"></i><span>Effects</span></div>
-            <div class="b-tool"><i class="fas fa-music"></i><span>Sounds</span></div>
-            <div class="b-tool"><i class="fas fa-font"></i><span>Text</span></div>
         </div>
     </div>
 
     <script>
-        // Modal kholne ke liye
-        function openPopup() {
-            document.getElementById('project-modal').style.display = 'flex';
+        let selectedRatio = '16:9';
+
+        function openModal() {
+            document.getElementById('projectModal').style.display = 'flex';
         }
 
-        // Modal band karne ke liye (Cancel)
-        function closePopup() {
-            document.getElementById('project-modal').style.display = 'none';
+        function closeModal() {
+            document.getElementById('projectModal').style.display = 'none';
         }
 
-        // Create par click karke Canvas me jane ke liye
-        function openCanvas() {
-            closePopup();
-            document.getElementById('screen-dashboard').style.display = 'none';
-            document.getElementById('screen-canvas').style.display = 'flex';
+        function selectRatio(element, ratio) {
+            // Remove active class from all options
+            document.querySelectorAll('.canvas-opt').forEach(opt => opt.classList.remove('active'));
+            // Add active class to clicked option
+            element.classList.add('active');
+            selectedRatio = ratio;
         }
 
-        // Canvas se wapas Dashboard aane ke liye (Back Arrow)
-        function backToDashboard() {
-            document.getElementById('screen-canvas').style.display = 'none';
-            document.getElementById('screen-dashboard').style.display = 'flex';
+        // Yeh function alag page par le jayega
+        function redirectToCanvas() {
+            const title = document.getElementById('projectTitleInput').value;
+            closeModal();
+            
+            // Query parameters ke sath canvas.html par redirect karein
+            window.location.href = `canvas.html?title=${encodeURIComponent(title)}&ratio=${selectedRatio}`;
         }
     </script>
 </body>
