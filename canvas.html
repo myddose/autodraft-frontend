@@ -6,252 +6,144 @@
     <title>Autodraft Canvas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
-    
     <style>
         :root {
             --bg-dark: #121212;
             --bg-panel: #1a1a1a;
-            --bg-timeline: #181818;
-            --border-color: #2a2a2a;
+            --bg-timeline: #1b1b1e;
+            --border-color: #2e2e2e;
             --text-main: #ffffff;
-            --text-muted: #888888;
+            --text-muted: #999999;
             --accent-blue: #3b82f6;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        
-        body { 
-            background-color: var(--bg-dark); 
-            color: var(--text-main); 
-            height: 100vh; 
-            width: 100vw; 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
-        }
+        body { background-color: var(--bg-dark); color: var(--text-main); height: 100vh; width: 100vw; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* --- 1. TOP BAR (Exact match with Desktop/Mobile screenshots) --- */
-        .topbar {
-            height: 55px;
-            background-color: var(--bg-panel);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 16px;
-        }
-
-        .tb-left { display: flex; align-items: center; gap: 20px; font-size: 18px; }
-        .tb-left i { cursor: pointer; color: var(--text-main); }
+        /* Mobile Topbar */
+        .topbar { height: 56px; background-color: var(--bg-panel); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; border-bottom: 1px solid var(--border-color); }
+        .tb-left, .tb-right { display: flex; align-items: center; gap: 18px; font-size: 18px; color: var(--text-muted); }
+        .tb-left i, .tb-right i { cursor: pointer; transition: color 0.2s; }
+        .tb-left i:hover, .tb-right i:hover { color: var(--text-main); }
         .icon-siren { color: #eab308 !important; }
+        .btn-download { background-color: var(--accent-blue); color: white; border: none; width: 34px; height: 34px; border-radius: 8px; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
-        .tb-center { display: flex; flex-direction: column; align-items: center; display: none; } /* Used for Desktop title */
-        
-        .tb-right { display: flex; align-items: center; gap: 20px; font-size: 18px; }
-        .tb-right i { cursor: pointer; color: var(--text-main); }
-        .btn-download {
-            background-color: var(--accent-blue);
-            color: white;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
+        .sub-bar { display: flex; justify-content: space-between; padding: 6px 16px; font-size: 11px; color: var(--text-muted); background-color: var(--bg-panel); border-bottom: 1px solid var(--border-color); }
 
-        .meta-bar {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 16px;
-            font-size: 11px;
-            color: var(--text-muted);
-            background-color: var(--bg-panel);
-            border-bottom: 1px solid var(--border-color);
-        }
+        /* Desktop Topbar Additions (Hidden on Mobile) */
+        .desktop-only { display: none; }
 
-        /* --- 2. WORKSPACE CANVAS --- */
-        .workspace {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #151515;
-            position: relative;
-            overflow: auto;
-        }
-        
-        .canvas-wrapper {
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-        }
+        /* Workspace Canvas */
+        .workspace { flex: 1; display: flex; align-items: center; justify-content: center; background-color: #121212; position: relative; overflow: auto; }
+        .canvas-wrapper { box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
 
-        /* --- 3. TIMELINE SECTION --- */
-        .timeline {
-            background-color: var(--bg-timeline);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-        }
+        /* Timeline Section */
+        .timeline { background-color: var(--bg-timeline); border-top: 1px solid var(--border-color); display: flex; flex-direction: column; }
 
-        /* Row 1: Playback Controls */
-        .tl-row-1 {
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            gap: 20px;
-        }
-        .time-text { font-size: 14px; font-weight: 500; min-width: 45px; }
-        .play-group { display: flex; align-items: center; gap: 16px; font-size: 20px; color: var(--text-muted); }
-        .play-group .fa-play { font-size: 28px; color: var(--text-main); }
-        .zoom-group { display: flex; align-items: center; gap: 16px; font-size: 18px; margin-left: auto; color: var(--text-main); }
+        /* Row 1 */
+        .tl-row-1 { display: flex; align-items: center; padding: 12px 16px; justify-content: space-between; }
+        .time-text { font-size: 14px; font-weight: 500; min-width: 50px; }
+        .play-group { display: flex; align-items: center; gap: 16px; font-size: 18px; color: var(--text-muted); }
+        .play-group .fa-play { font-size: 26px; color: var(--text-main); }
+        .zoom-group { display: flex; align-items: center; gap: 14px; font-size: 16px; color: var(--text-main); }
 
-        /* Row 2: Cut, Copy, Speed, Undo/Redo */
-        .tl-row-2 {
-            display: flex;
-            align-items: center;
-            padding: 0 16px 12px;
-            gap: 20px;
-            color: #555; /* Dim color as per screenshot */
-            font-size: 16px;
-            border-bottom: 1px solid var(--border-color);
-        }
+        /* Row 2 */
+        .tl-row-2 { display: flex; align-items: center; padding: 0 16px 12px; gap: 14px; color: #777; font-size: 15px; border-bottom: 1px solid #222; overflow-x: auto; }
+        .tl-row-2::-webkit-scrollbar { display: none; }
         .tl-row-2 i { cursor: pointer; }
-        .tl-divider { width: 1px; height: 16px; background-color: var(--border-color); }
-        .speed-text { font-size: 13px; display: flex; align-items: center; gap: 4px; color: var(--text-muted); }
-        .active-icon { color: var(--text-main) !important; }
+        .tl-row-2 i:hover { color: var(--text-main); }
+        .tl-divider { width: 1px; height: 16px; background-color: #333; flex-shrink: 0; }
+        .speed-text { font-size: 12px; display: flex; align-items: center; gap: 4px; color: var(--text-muted); flex-shrink: 0; }
 
-        /* Row 3: Scenes Tab */
-        .scene-tabs {
-            display: flex;
-            align-items: center;
-            background-color: #1e1e1e;
-            padding: 0 8px;
-        }
-        .nav-arrow { padding: 12px; color: var(--text-muted); cursor: pointer; }
-        .scene-active {
-            background-color: #ffffff;
-            color: #000000;
-            font-size: 13px;
-            font-weight: 600;
-            padding: 10px 16px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            border-radius: 4px 4px 0 0;
-            margin-top: 4px;
-        }
-        .scene-new {
-            color: var(--text-muted);
-            font-size: 13px;
-            padding: 10px 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        /* Row 3 */
+        .scene-tabs { display: flex; align-items: center; background-color: #1e1e1e; padding: 0 8px; border-bottom: 1px solid #111; }
+        .nav-arrow { padding: 10px; color: var(--text-muted); cursor: pointer; font-size: 12px; }
+        .scene-active { background-color: #ffffff; color: #000000; font-size: 12px; font-weight: 600; padding: 8px 12px; display: flex; align-items: center; gap: 12px; border-radius: 4px 4px 0 0; margin-top: 4px; }
+        .scene-new { color: var(--text-muted); font-size: 12px; padding: 8px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
 
-        /* Row 4: Timeline Track */
-        .track-ruler {
-            height: 24px;
-            background-color: #222;
-            display: flex;
-            align-items: flex-end;
-            padding-left: 16px;
-            font-size: 10px;
-            color: var(--text-muted);
-            border-bottom: 1px solid #111;
-        }
-        .tick { flex: 1; border-left: 1px solid #444; height: 8px; padding-left: 4px; }
-        .tick-major { height: 16px; border-left: 1px solid #777; }
-        .track-area { height: 70px; background-color: #0d0d0d; }
+        /* Row 4 */
+        .track-ruler { height: 20px; background-color: #222; display: flex; align-items: flex-end; font-size: 10px; color: var(--text-muted); border-bottom: 1px solid #111; position: relative; }
+        .tick { flex: 1; border-left: 1px solid #444; height: 6px; padding-left: 4px; }
+        .tick-major { height: 12px; border-left: 1px solid #777; }
+        .track-area { height: 70px; background-color: #080808; }
 
-        /* --- 4. BOTTOM TOOLS BAR (Exact 16 Tools from Autodraft) --- */
-        .bottom-tools {
-            height: 70px;
-            background-color: #0a0a0a;
-            display: flex;
-            align-items: center;
-            gap: 22px;
-            padding: 0 20px;
-            overflow-x: auto;
-            border-top: 1px solid var(--border-color);
-        }
-
+        /* Bottom Tools */
+        .bottom-tools { height: 65px; background-color: #0a0a0a; display: flex; align-items: center; gap: 20px; padding: 0 16px; overflow-x: auto; border-top: 1px solid var(--border-color); }
         .bottom-tools::-webkit-scrollbar { display: none; }
-
-        .b-tool {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            color: var(--text-muted);
-            font-size: 10px;
-            min-width: 55px;
-            cursor: pointer;
-            position: relative;
-        }
+        .b-tool { display: flex; flex-direction: column; align-items: center; gap: 5px; color: var(--text-muted); font-size: 10px; min-width: 55px; cursor: pointer; position: relative; transition: color 0.2s; }
+        .b-tool:hover { color: white; }
         .b-tool i { font-size: 18px; }
+        .ai-badge::after { content: 'AI'; position: absolute; top: -5px; right: 2px; background-color: var(--accent-blue); color: white; font-size: 7px; padding: 2px 4px; border-radius: 4px; font-weight: 700; }
 
-        /* Exact matching Blue AI Badge */
-        .ai-badge::after {
-            content: 'AI';
-            position: absolute;
-            top: -6px;
-            right: 0px;
-            background-color: var(--accent-blue);
-            color: white;
-            font-size: 8px;
-            padding: 2px 5px;
-            border-radius: 4px;
-            font-weight: 700;
-        }
-
-        /* Desktop specific adjustments */
+        /* Desktop Specific Overrides to match Desktop screenshot */
         @media (min-width: 768px) {
-            .meta-bar { display: none; }
-            .tb-center { display: flex; }
-            .tb-left .fa-cog { display: none; }
-            .timeline { max-height: 200px; }
+            .sub-bar { display: none; }
+            .topbar { padding: 0 24px; }
+            .desktop-only { display: flex; }
+            .mobile-only { display: none; }
+            
+            .desktop-center { display: flex; flex-direction: column; align-items: center; }
+            .desktop-title-row { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+            .desktop-meta-row { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+            .desktop-ratio { background-color: #222; padding: 4px 10px; border-radius: 6px; font-size: 12px; display: flex; align-items: center; gap: 6px; border: 1px solid var(--border-color); }
         }
     </style>
 </head>
 <body>
 
+    <!-- 1. TOP BAR -->
     <header class="topbar">
+        <!-- Left -->
         <div class="tb-left">
             <i class="fas fa-arrow-left" onclick="window.location.href='index.html'"></i>
-            <i class="fas fa-cog"></i> <i class="fas fa-lightbulb icon-siren"></i> </div>
-
-        <div class="tb-center">
-            <div style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-                <i class="fas fa-magic" style="color:#eab308;"></i> <span id="desktopProjTitle">New Project</span> <i class="fas fa-pen" style="font-size:10px; color:#666;"></i>
+            <i class="fas fa-cog mobile-only"></i> 
+            <i class="fas fa-lightbulb icon-siren desktop-only"></i>
+            <i class="fas fa-magic icon-siren mobile-only"></i>
+            
+            <!-- Desktop Title Area (Left Side in desktop screenshot) -->
+            <div class="desktop-only desktop-center" style="align-items: flex-start;">
+                <div class="desktop-title-row">
+                    <span id="desktopProjTitle">New Project</span> <i class="fas fa-pen" style="font-size:10px; color:#666;"></i>
+                </div>
+                <div class="desktop-meta-row">v79.2.9 IN &nbsp;&nbsp; Ultra Low Mode <i class="fas fa-caret-down"></i></div>
             </div>
-            <div style="font-size: 10px; color: var(--text-muted);">v79.3.0 IN &nbsp; Ultra Low Mode <i class="fas fa-caret-down"></i></div>
         </div>
 
+        <!-- Center (Desktop only) -->
+        <div class="desktop-only desktop-ratio">
+            <i id="desktopRatioIcon" class="fas fa-desktop"></i> <span id="desktopRatioText">16:9</span> <i class="fas fa-caret-down"></i>
+        </div>
+
+        <!-- Right -->
         <div class="tb-right">
             <i class="fas fa-history"></i>
-            <i class="fas fa-save"></i>
-            <i class="fas fa-image"></i>
+            <i class="far fa-save"></i>
+            <i class="far fa-image"></i>
             <button class="btn-download"><i class="fas fa-download"></i></button>
+            <!-- Desktop extra info -->
+            <div class="desktop-only" style="flex-direction: column; font-size: 10px; text-align: right; margin-left: 8px;">
+                <div id="desktopProjId">16700533</div>
+                <div style="cursor:pointer;" onclick="clearCanvas()">Clear All <i class="fas fa-redo"></i></div>
+            </div>
         </div>
     </header>
     
-    <div class="meta-bar">
+    <!-- Mobile Meta Bar -->
+    <div class="sub-bar mobile-only">
         <span>v79.3.0 &nbsp;&nbsp; IN</span>
         <span id="mobileProjId">16709911</span>
     </div>
 
+    <!-- 2. WORKSPACE -->
     <main class="workspace" id="canvasContainer">
         <div class="canvas-wrapper">
             <canvas id="mainCanvas"></canvas>
         </div>
     </main>
 
+    <!-- 3. TIMELINE -->
     <section class="timeline">
+        <!-- Row 1: Playback -->
         <div class="tl-row-1">
             <div class="time-text">00:00</div>
             <div class="play-group">
@@ -267,22 +159,24 @@
             </div>
         </div>
 
+        <!-- Row 2: Tools -->
         <div class="tl-row-2">
             <i class="far fa-copy"></i>
             <i class="fas fa-cut"></i>
             <i class="fas fa-video"></i>
             <div class="tl-divider"></div>
-            <div class="speed-text">1x <i class="fas fa-forward active-icon"></i></div>
+            <div class="speed-text">1x <i class="fas fa-forward" style="color:var(--text-main);"></i></div>
             <div class="tl-divider"></div>
-            <i class="fas fa-undo active-icon"></i>
-            <i class="fas fa-redo active-icon"></i>
+            <i class="fas fa-undo"></i>
+            <i class="fas fa-redo"></i>
             <div class="tl-divider"></div>
-            <i class="fas fa-minus active-icon"></i>
-            <i class="fas fa-plus active-icon"></i>
+            <i class="fas fa-minus"></i>
+            <i class="fas fa-plus"></i>
             <div style="flex:1;"></div>
-            <i class="fas fa-expand active-icon"></i>
+            <i class="fas fa-expand"></i>
         </div>
 
+        <!-- Row 3: Scenes -->
         <div class="scene-tabs">
             <i class="fas fa-chevron-left nav-arrow"></i>
             <div class="scene-active">Scene1 <i class="fas fa-ellipsis-v" style="color: #666;"></i></div>
@@ -291,8 +185,9 @@
             <i class="fas fa-chevron-right nav-arrow"></i>
         </div>
 
+        <!-- Row 4: Track -->
         <div class="track-ruler">
-            <div class="tick tick-major">0</div>
+            <div class="tick tick-major" style="flex:0; padding-right:4px;">0</div>
             <div class="tick"></div><div class="tick"></div>
             <div class="tick tick-major">10</div>
             <div class="tick"></div><div class="tick"></div>
@@ -304,6 +199,7 @@
         <div class="track-area"></div>
     </section>
 
+    <!-- 4. BOTTOM TOOLS -->
     <div class="bottom-tools">
         <div class="b-tool"><i class="fas fa-running"></i><span>Character</span></div>
         <div class="b-tool"><i class="far fa-folder-open"></i><span>Media</span></div>
@@ -311,9 +207,9 @@
         <div class="b-tool ai-badge"><i class="fas fa-image"></i><span>Image Gen</span></div>
         <div class="b-tool ai-badge"><i class="fas fa-video"></i><span>Video Gen</span></div>
         <div class="b-tool ai-badge"><i class="fas fa-microphone-alt"></i><span>AI Voice</span></div>
-        <div class="b-tool ai-badge"><i class="fas fa-user-astronaut"></i><span>AI Character</span></div>
-        <div class="b-tool ai-badge"><i class="fas fa-photo-video"></i><span>AI Thumbnail</span></div>
-        <div class="b-tool"><i class="fas fa-box-open"></i><span>Asset Library</span></div>
+        <div class="b-tool ai-badge"><i class="fas fa-user-astronaut"></i><span>AI Char</span></div>
+        <div class="b-tool ai-badge"><i class="fas fa-photo-video"></i><span>AI Thumb</span></div>
+        <div class="b-tool"><i class="fas fa-box-open"></i><span>Asset Lib</span></div>
         <div class="b-tool ai-badge"><i class="fas fa-magic"></i><span>AI Prop</span></div>
         <div class="b-tool"><i class="fas fa-atom"></i><span>Effects</span></div>
         <div class="b-tool"><i class="fas fa-wave-square"></i><span>Sounds</span></div>
@@ -324,41 +220,48 @@
     </div>
 
     <script>
-        // Set dynamic URL params
+        // 1. URL Parameter Assignment
         const params = new URLSearchParams(window.location.search);
         const title = params.get('title') || 'New Project';
         const ratio = params.get('ratio') || '16:9';
+        const randomId = Math.floor(10000000 + Math.random() * 90000000);
         
         document.getElementById('desktopProjTitle').innerText = title;
-        document.getElementById('mobileProjId').innerText = Math.floor(10000000 + Math.random() * 90000000);
+        document.getElementById('mobileProjId').innerText = randomId;
+        document.getElementById('desktopProjId').innerText = randomId;
+        
+        if(ratio === '9:16') {
+            document.getElementById('desktopRatioIcon').className = 'fas fa-mobile-alt';
+            document.getElementById('desktopRatioText').innerText = '9:16';
+        }
 
+        // 2. Exact Canvas Initialization logic
         let canvas;
-
         function initCanvas() {
-            // Get available space for canvas
             const container = document.getElementById('canvasContainer');
-            const availableWidth = container.clientWidth - 40; 
-            const availableHeight = container.clientHeight - 40;
+            const padding = 40;
+            const availableWidth = container.clientWidth - padding; 
+            const availableHeight = container.clientHeight - padding;
 
             let cWidth, cHeight;
 
-            // Apply selected ratio exactly as requested
             if (ratio === '9:16') {
-                cHeight = availableHeight > 550 ? 550 : availableHeight;
+                cHeight = availableHeight > 600 ? 600 : availableHeight;
                 cWidth = cHeight * (9 / 16);
             } else {
                 cWidth = availableWidth > 800 ? 800 : availableWidth;
                 cHeight = cWidth * (9 / 16);
             }
 
+            // YE RAHA BUG FIX: 'selection: false' se transparent blue box banna band ho jayega.
             canvas = new fabric.Canvas('mainCanvas', {
                 width: cWidth,
                 height: cHeight,
-                backgroundColor: '#ffffff'
+                backgroundColor: '#ffffff',
+                selection: false 
             });
         }
 
-        // Initialize and handle window resize for canvas scaling
         window.onload = initCanvas;
         
         window.addEventListener('resize', () => {
@@ -368,7 +271,13 @@
             }
         });
 
-        // Basic Keyboard Support for interactive canvas
+        function clearCanvas() {
+            if(canvas && confirm("Clear entire canvas?")) {
+                canvas.clear();
+                canvas.backgroundColor = '#ffffff';
+            }
+        }
+
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Delete' || e.key === 'Backspace') {
                 const activeObj = canvas.getActiveObject();
