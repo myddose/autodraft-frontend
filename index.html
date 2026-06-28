@@ -45,7 +45,7 @@
 
     <div id="imageResult"></div>
 
-    <script>
+        <script>
         async function generateImage() {
             const prompt = document.getElementById("promptInput").value;
             const resultDiv = document.getElementById("imageResult");
@@ -61,17 +61,25 @@
                     body: JSON.stringify({ prompt: prompt })
                 });
                 
+                // Agar server ne error diya, toh ye us error ko padhega
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(`Server Status ${response.status}: ${errText}`);
+                }
+
                 const data = await response.json();
                 
                 if(data.imageUrl) {
                     resultDiv.innerHTML = `<img src="${data.imageUrl}" alt="Generated AI Image">`;
                 } else {
-                    resultDiv.innerHTML = "<p>Failed to generate image.</p>";
+                    resultDiv.innerHTML = `<p>Error data: ${JSON.stringify(data)}</p>`;
                 }
             } catch (error) {
-                resultDiv.innerHTML = "<p>Error connecting to server.</p>";
+                // Exact error ko lal rang mein screen par dikhayega
+                resultDiv.innerHTML = `<p style="color:#ff6b6b; font-size:14px; text-align:center;"><b>Error Details:</b><br>${error.message}</p>`;
             }
         }
     </script>
+
 </body>
 </html>
