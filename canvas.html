@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autodraft Canvas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --bg-panel: #1a1a1a;
+            --bg-topbar: #1e1e24;
+            --border-color: #2a2a2a;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --accent-blue: #3b82f6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        
+        body { 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            height: 100vh; 
+            width: 100vw; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+        }
+
+        /* --- 1. TOP BAR --- */
+        .topbar {
+            height: 60px;
+            background-color: var(--bg-topbar);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+        }
+
+        .topbar-left { display: flex; align-items: center; gap: 16px; }
+        .back-btn { background: none; border: none; color: var(--text-main); font-size: 16px; cursor: pointer; }
+        
+        .project-info { display: flex; flex-direction: column; }
+        .project-title-row { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+        .project-meta { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+        .project-meta span { margin-right: 8px; }
+
+        .topbar-center {
+            background-color: #2a2a35;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .topbar-right { display: flex; align-items: center; gap: 16px; font-size: 14px; color: var(--text-muted); }
+        .topbar-right i { cursor: pointer; transition: color 0.2s; }
+        .topbar-right i:hover { color: white; }
+        .export-btn {
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- 2. MAIN WORKSPACE (CANVAS) --- */
+        .workspace {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #151515;
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .white-board {
+            background-color: #ffffff;
+            border-radius: 4px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+
+        /* --- 3. TIMELINE AREA --- */
+        .timeline {
+            height: 140px;
+            background-color: var(--bg-panel);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .timeline-handle {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            padding: 2px 16px;
+            border-radius: 8px 8px 0 0;
+            color: var(--text-muted);
+            font-size: 10px;
+            cursor: ns-resize;
+        }
+
+        .timeline-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 16px;
+            border-bottom: 1px solid #252525;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .t-left { display: flex; gap: 16px; }
+        .t-left span { cursor: pointer; display: flex; align-items: center; gap: 6px; }
+        .t-left span:hover { color: white; }
+
+        .t-center { display: flex; gap: 20px; font-size: 16px; align-items: center; }
+        .t-center i { cursor: pointer; }
+        .t-center i:hover, .t-center .play-btn { color: white; }
+
+        .t-right { display: flex; gap: 16px; align-items: center; }
+        .t-right i { cursor: pointer; }
+
+        .track-area {
+            flex: 1;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            overflow-x: auto;
+        }
+
+        .scene-block {
+            background-color: #ffffff;
+            color: #000000;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .add-scene-btn {
+            background: transparent;
+            border: 1px dashed var(--text-muted);
+            color: var(--text-muted);
+            font-size: 12px;
+            padding: 6px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* --- 4. BOTTOM TOOLS BAR --- */
+        .bottom-tools {
+            height: 65px;
+            background-color: var(--bg-dark);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            gap: 12px;
+            overflow-x: auto;
+        }
+
+        /* Hide Scrollbar */
+        .bottom-tools::-webkit-scrollbar, .track-area::-webkit-scrollbar { display: none; }
+
+        .tool-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-size: 10px;
+            min-width: 60px;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .tool-btn:hover { color: white; }
+        .tool-btn i { font-size: 18px; }
+
+        .ai-badge::after {
+            content: 'AI';
+            position: absolute;
+            top: -5px;
+            right: 8px;
+            background-color: var(--accent-blue);
+            color: white;
+            font-size: 8px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
+            <i class="fas fa-sun" style="color: #fbbf24;"></i>
+            <div class="project-info">
+                <div class="project-title-row">
+                    <span id="projectNameDisplay">New Project</span> 
+                    <i class="fas fa-pen" style="font-size: 10px; color: var(--text-muted); cursor: pointer;"></i>
+                </div>
+                <div class="project-meta">
+                    <span>v7.9.2.9 IN</span>
+                    <span>Ultra Low Mode <i class="fas fa-caret-down"></i></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="topbar-center">
+            <i id="ratioIcon" class="fas fa-desktop"></i> 
+            <span id="ratioDisplay">16:9</span> 
+            <i class="fas fa-caret-down"></i>
+        </div>
+
+        <div class="topbar-right">
+            <i class="fas fa-history"></i>
+            <i class="fas fa-save"></i>
+            <i class="fas fa-image"></i>
+            <button class="export-btn"><i class="fas fa-download"></i></button>
+            <span style="font-size: 10px; margin-left: 8px;">Clear All <i class="fas fa-redo"></i></span>
+        </div>
+    </header>
+
+    <main class="workspace">
+        <div id="whiteBoard" class="white-board"></div>
+    </main>
+
+    <div class="timeline">
+        <div class="timeline-handle"><i class="fas fa-chevron-up"></i></div>
+        
+        <div class="timeline-controls">
+            <div class="t-left">
+                <span><i class="far fa-copy"></i> Duplicate</span>
+                <span><i class="fas fa-cut"></i> Split</span>
+                <span><i class="fas fa-camera"></i> Camera</span>
+            </div>
+            
+            <div class="t-center">
+                <i class="fas fa-step-backward"></i>
+                <i class="fas fa-play play-btn"></i>
+                <i class="fas fa-film"></i>
+                <i class="fas fa-step-forward"></i>
+            </div>
+            
+            <div class="t-right">
+                <span>00:36 &nbsp; 1x <i class="fas fa-forward"></i></span>
+                <i class="fas fa-undo"></i>
+                <i class="fas fa-redo"></i>
+                <span>- &nbsp; +</span>
+                <i class="fas fa-expand"></i>
+            </div>
+        </div>
+
+        <div class="track-area">
+            <div class="scene-block">Scene1 <i class="fas fa-ellipsis-v" style="color: #666;"></i></div>
+            <button class="add-scene-btn">+ New Scene</button>
+        </div>
+    </div>
+
+    <div class="bottom-tools">
+        <div class="tool-btn"><i class="fas fa-walking"></i><span>Character</span></div>
+        <div class="tool-btn"><i class="fas fa-folder-open"></i><span>Media</span></div>
+        <div class="tool-btn"><i class="fas fa-clapperboard"></i><span>Templates</span></div>
+        <div class="tool-btn ai-badge"><i class="fas fa-image"></i><span>Image Gen</span></div>
+        <div class="tool-btn ai-badge"><i class="fas fa-video"></i><span>Video Gen</span></div>
+        <div class="tool-btn ai-badge"><i class="fas fa-microphone"></i><span>AI Voice</span></div>
+        <div class="tool-btn ai-badge"><i class="fas fa-user-astronaut"></i><span>AI Character</span></div>
+        <div class="tool-btn ai-badge"><i class="fas fa-photo-video"></i><span>AI Thumbnail</span></div>
+        <div class="tool-btn ai-badge"><i class="fas fa-box-open"></i><span>Asset Library</span></div>
+        <div class="tool-btn ai-badge"><i class="fas fa-cube"></i><span>AI Prop</span></div>
+        <div class="tool-btn"><i class="fas fa-magic"></i><span>Effects</span></div>
+        <div class="tool-btn"><i class="fas fa-music"></i><span>Sounds</span></div>
+        <div class="tool-btn"><i class="fas fa-music"></i><span>Music</span></div>
+        <div class="tool-btn"><i class="fas fa-font"></i><span>Text</span></div>
+    </div>
+
+    <script>
+        // Function to extract URL parameters
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                title: params.get('title') || 'Untitled Project',
+                ratio: params.get('ratio') || '16:9'
+            };
+        }
+
+        // Initialize Canvas on Page Load
+        window.onload = function() {
+            const data = getQueryParams();
+            
+            // 1. Update Project Title
+            document.getElementById('projectNameDisplay').innerText = data.title;
+            
+            // 2. Update Ratio Text & Icon
+            document.getElementById('ratioDisplay').innerText = data.ratio;
+            const ratioIcon = document.getElementById('ratioIcon');
+            const board = document.getElementById('whiteBoard');
+
+            if(data.ratio === '9:16') {
+                ratioIcon.className = 'fas fa-mobile-alt'; // Phone icon for 9:16
+                // Setup vertical canvas
+                board.style.aspectRatio = '9/16';
+                board.style.height = '85%';
+                board.style.width = 'auto';
+            } else {
+                ratioIcon.className = 'fas fa-desktop'; // Desktop icon for 16:9
+                // Setup horizontal canvas
+                board.style.aspectRatio = '16/9';
+                board.style.width = '75%';
+                board.style.height = 'auto';
+            }
+        };
+
+        // Back to Dashboard Function
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
