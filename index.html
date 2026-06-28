@@ -1,1 +1,23 @@
-const response = await fetch("https://autodraft-backend.onrender.com/api/ai/generate", {
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Autodraft</title>
+</head>
+<body>
+    <h1>AI Image Generator</h1>
+    <!-- Aapka baki ka design yahan aayega -->
+
+    <script>
+        // Yahan se aapka JavaScript shuru hoga
+        async function fetchData() {
+            const response = await fetch("https://autodraft-backend.onrender.com/api/ai/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ /* aapka data */ })
+            });
+            const data = await response.json();
+            console.log(data);
+        }
+    </script>
+</body>
+</html>
